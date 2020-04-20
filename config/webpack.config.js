@@ -381,20 +381,20 @@ module.exports = function (webpackEnv) {
                       },
                     },
                   ],
-                  [
-                    "react-css-modules",
-                    {
-                      generateScopedName: '[name]_[local]_[hash:base64:5]',
-                      filetypes: {
-                        ".styl": {
-                          syntax: "sugarss"
-                        }
-                      },
-                      webpackHotModuleReloading: true, // 支持热加载
-                      handleMissingStyleName: "warn", // 没有时进行警告
-                      exclude: ".css$"
-                    }
-                  ],
+                  // [
+                  //   "react-css-modules",
+                  //   {
+                  //     generateScopedName: '[name]_[local]_[hash:base64:5]',
+                  //     filetypes: {
+                  //       ".styl": {
+                  //         syntax: "sugarss"
+                  //       }
+                  //     },
+                  //     webpackHotModuleReloading: true, // 支持热加载
+                  //     handleMissingStyleName: "warn", // 没有时进行警告
+                  //     exclude: ".css$"
+                  //   }
+                  // ],
                 ],
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -438,9 +438,9 @@ module.exports = function (webpackEnv) {
                 {
                   importLoaders: 1,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
-                  modules: {
-                    localIdentName: '[name]_[local]_[hash:base64:5]',
-                  }
+                  // modules: {
+                  //   localIdentName: '[name]_[local]_[hash:base64:5]',
+                  // }
                 },
                 'stylus-loader',
               ),
