@@ -11,39 +11,53 @@ class Login extends Component<any> {
   }
 
   handleLogin = async () => {
-    const { phone, password } = this.state
-    if (!phone.trim() || !password.trim()) {
-      Toast.info('用户名或密码不能为空', 1500)
-      return
-    }
-    if (!/\w{6,12}/.test(password)) {
-      Toast.info('请输入6-12位密码', 1500)
-      return
-    }
-    // TODO 请求接口 保存数据  跳转页面
-    const res = await login(phone, password)
-    if (res && res.data) {
-      const { data: { code } } = res
-      if (code === '500') {
-        Toast.info("服务端出错", 1500)
-        return;
-      }
-      if (code === '404') {
-        Toast.info("密码错误", 1500)
+    try {
+      const { phone, password } = this.state
+      if (!phone.trim() || !password.trim()) {
+        Toast.info('用户名或密码不能为空', 1500)
         return
       }
-      if (code === '200') {
-        this.props.history.replace('/')
+      if (!/\w{6,12}/.test(password)) {
+        Toast.info('请输入6-12位密码', 1500)
+        return
       }
-      if (code === '400') {
-        // 注册
-        const reg = await register(phone, password)
-        if (reg && reg.data && reg.data.code === '200') {
-          this.props.history.replace('/')
-        } else {
-          Toast.info("注册错误")
+      // 请求接口 保存数据  跳转页面
+      const res = await login(phone, password)
+      if (res && res.data) {
+        const { data: { code, data } } = res
+        if (code === '500') {
+          Toast.info("服务端出错", 1500)
+          return;
+        }
+        if (code === '404') {
+          Toast.info("密码错误", 1500)
+          return
+        }
+        if (code === '200') {
+          if (data && data.uid) {
+            localStorage.setItem('uid', data.uid)
+            this.props.history.replace('/')
+            return
+          }
+        }
+        if (code === '400') {
+          // 注册
+          const reg = await register(phone, password)
+          if (reg && reg.data && reg.data.code === '200') {
+            const res = await login(phone, password)
+            const { data: { data } } = res
+            if (data && data.uid) {
+              localStorage.setItem('uid', data.uid)
+              this.props.history.replace('/')
+              return
+            }
+          } else {
+            Toast.info("注册错误", 1500)
+          }
         }
       }
+    } catch (e) {
+      Toast.info('登录错误', 1500)
     }
   }
 
@@ -76,4 +90,4 @@ class Login extends Component<any> {
   }
 }
 
-export default Login;
+export default Login

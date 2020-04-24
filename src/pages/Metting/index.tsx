@@ -1,8 +1,10 @@
 import React, { Component } from "react"
 import AgoraRTC from 'agora-rtc-sdk'
 import { inject, observer } from 'mobx-react'
+import CopyToClipboard from 'react-copy-to-clipboard'
 import "./index.styl"
 import { genAvatarByName } from "../../utils"
+import Toast from "../../components/Toast";
 
 let client: any
 
@@ -226,11 +228,13 @@ class Metting extends Component<any> {
   }
 
   render() {
-    const { userStore: { userList } } = this.props
+    const { commonStore, userStore: { userList } } = this.props
     const { recordingStatus, isShowSubtitle, maskVisible } = this.state
 
     return (
       <div className='metting'>
+        <div className='metting-title'>{commonStore.getTitle() || "项目进度会议"}</div>
+        <div className='channel-name'>房间号：{commonStore.getChannel()}</div>
         <div className='user-container'>
           <div className='user-inner'>
             {
@@ -250,7 +254,11 @@ class Metting extends Component<any> {
             }
             <div className='user'>
               <div className='avatar'><div className='invivate'></div></div>
-              <div className='name'><div className='title'>邀请</div></div>
+              <div className='name'>
+                <CopyToClipboard text={commonStore.getChannel()} onCopy={() => Toast.info('房间号已复制', 1000)}>
+                  <div className='title'>邀请</div>
+                </CopyToClipboard>
+              </div>
             </div>
           </div>
         </div>

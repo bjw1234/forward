@@ -7,17 +7,17 @@ import Toast from '../../components/Toast'
 
 @inject("userStore")
 @inject("commonStore")
-class Join extends Component<any> {
+class AddIn extends Component<any> {
 
   state = {
-    title: ''
+    channel: ''
   }
 
   handleStart = async () => {
     try {
-      const { title } = this.state
-      if (!title) {
-        Toast.info("会议主题不能为空", 1500)
+      const { channel } = this.state
+      if (!channel) {
+        Toast.info("会议号不能为空", 1500)
         return
       }
       // 存储当前用户
@@ -33,14 +33,13 @@ class Join extends Component<any> {
         stream: null,
         type: 0,
       })
-      const tokenRet: any = await getToken(uid)
-      if (tokenRet && tokenRet.data) {
-        const { data: { Channel, Token } } = tokenRet
-        commonStore.setToken(Token)
-        commonStore.setChannel(Channel)
-        commonStore.setTitle(title)
-        this.props.history.replace('/metting')
-      }
+      // const tokenRet: any = await getToken(uid)
+      // if (tokenRet && tokenRet.data) {
+      //   const { data: { Token } } = tokenRet
+      //   commonStore.setToken(Token)
+      //   commonStore.setChannel(channel)
+      this.props.history.replace('/metting')
+      // }
     } catch (e) {
       console.log(e)
       Toast.info("请求服务器出错", 1500)
@@ -52,31 +51,24 @@ class Join extends Component<any> {
     history.goBack()
   }
 
-  handleTitleChange = (e: any) => {
-    this.setState({ title: e.target.value })
+  handleChannelChange = (e: any) => {
+    this.setState({ channel: e.target.value })
   }
 
   render() {
     return (
-      <div className='join'>
+      <div className='addin'>
         <div onClick={this.handleClose} className='close'></div>
-        <div className='title'>
-          会议主题
-        </div>
+        <div className='title'>请输入会议号</div>
         <div className='input-wrapper'>
-          <input onChange={this.handleTitleChange} className='input' type='text' placeholder='请输入会议主题' />
+          <input onChange={this.handleChannelChange} className='input' type='text' placeholder='请输入会议号' />
         </div>
         <div className='avatar'>
           <img alt="avatar" src="https://avatar-static.segmentfault.com/191/194/1911941393-5ae29232571d9_huge256" />
         </div>
 
         <div className='bottom-area'>
-          {/* <div className='btns'>
-            <div className='btn'>麦克风</div>
-            <div className='btn'>摄像头</div>
-            <div className='btn'>扬声器</div>
-          </div> */}
-          <div onClick={this.handleStart} className='start-btn'>开始会议</div>
+          <div onClick={this.handleStart} className='start-btn'>加入会议</div>
         </div>
 
       </div>
@@ -84,4 +76,4 @@ class Join extends Component<any> {
   }
 }
 
-export default Join;
+export default AddIn

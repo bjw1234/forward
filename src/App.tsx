@@ -9,26 +9,18 @@ import Home from './pages/Home';
 import Join from './pages/Join';
 import Login from './pages/Login';
 import Metting from './pages/Metting';
+import AddIn from './pages/AddIn';
 
 function App() {
   return (
     <div className="app">
-      {/* <div styleName="header">
-        <Link to="/">首页</Link>
-        <Link to="/about">关于</Link>
-        <Link to="/video">视频会议</Link>
-      </div> */}
-
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/login" component={Login} />
-        <Route exact path="/join" component={Join} />
+        <Route path="/addin" component={AddIn} />
+        <Route path="/join" component={Join} />
         <Route path="/metting" component={Metting} />
       </Switch>
-
-      {/* <div styleName="footer">
-        页脚
-      </div> */}
     </div>
   );
 }

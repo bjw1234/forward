@@ -8,6 +8,10 @@ class Home extends Component<any> {
     this.props.history.push('/join');
   }
 
+  handleAddIn = () => {
+    this.props.history.push('/addin');
+  }
+
   render() {
     return (
       <div className="home">
@@ -18,7 +22,7 @@ class Home extends Component<any> {
           <div className="name">HI，Hello World!</div>
         </div>
         <div className="banner-wrapper">
-          <div className="banner join-banner">
+          <div onClick={this.handleAddIn} className="banner join-banner">
             <div className="line"></div>
             <div className="text">加入会议</div>
           </div>

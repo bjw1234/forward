@@ -1,0 +1,82 @@
+.addin {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  background: #25324D;
+
+  .close {
+    position: absolute;
+    top: 30px;
+    left: 21px;
+    width: 25px;
+    height: 25px;
+    background-image: url('../../assets/img/close.png');
+    background-size: 25px 25px;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+    line-height: 22px;
+    margin-top: 60px;
+  }
+
+  .input-wrapper {
+    margin-top: 18px;
+
+    .input {
+      outline: none;
+      border: none;
+      text-align: center;
+      background: #25324D;
+      color: #ffffff;
+      border-bottom: 1px solid #ffffff;
+      font-size: 20px;
+      padding-bottom: 5px;
+    }
+  }
+
+  .avatar {
+    width: 90px;
+    height: 90px;
+    overflow: hidden;
+    border-radius: 50%;
+    text-align: center;
+    margin-top: 140px;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .bottom-area {
+    position: absolute;
+    bottom: 30px;
+
+    .btns {
+      display: flex;
+      color: #ffffff;
+
+      .btn {
+        margin: 0 20px;
+      }
+    }
+
+    .start-btn {
+      width: 195px;
+      height: 60px;
+      margin: 30px auto 0;
+      text-align: center;
+      background: rgba(87, 143, 254, 1);
+      font-size: 19px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 1);
+      line-height: 60px;
+      border-radius: 5px;
+    }
+  }
+}

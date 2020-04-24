@@ -20,3 +20,9 @@ export const register = (username: string, password: string) => {
     username, password
   })
 }
+
+export const getUserInfo = (uid: number) => {
+  return axios.post('/userInfo/acquireUserInfo', {
+    uid,
+  })
+}
