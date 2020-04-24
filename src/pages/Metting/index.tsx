@@ -2,12 +2,11 @@ import React, { Component } from "react"
 import AgoraRTC from 'agora-rtc-sdk'
 import { inject, observer } from 'mobx-react'
 import "./index.styl"
+import { genAvatarByName } from "../../utils"
 
 let client: any
 
 const appID = "373a17e296b4442282dcf8532df32ad3"
-const token = "006373a17e296b4442282dcf8532df32ad3IACA67qaGzUYPFyk+Fiq6g4dM+U4BLwSwVPGZb0dHBp+gg6C3mwAAAAAEACVhpaLplSdXgEAAQCmVJ1e"
-const channel = "bjw-channel"
 
 const recordingStatusMap: Index = {
   0: {
@@ -38,9 +37,12 @@ interface State {
   recordingStatus: number
   isShowSubtitle: boolean
   joined: boolean
+  maskVisible: boolean
+  localStream: any
 }
 
 @inject("userStore")
+@inject("commonStore")
 @observer
 class Metting extends Component<any> {
 
@@ -48,6 +50,8 @@ class Metting extends Component<any> {
     recordingStatus: 0,
     isShowSubtitle: false,
     joined: false,
+    maskVisible: false,
+    localStream: null,
   }
 
   componentDidMount = () => {
@@ -63,12 +67,18 @@ class Metting extends Component<any> {
     }
   }
 
+  componentWillUnmount = () => {
+    const { userStore } = this.props
+    userStore.clear()
+  }
+
   async join(uid: number) {
     try {
       const { joined } = this.state
+      const { commonStore } = this.props
       if (!joined) {
         await this.initPromise()
-        await this.joinPromise(token, channel, uid)
+        await this.joinPromise(commonStore.getToken(), commonStore.getChannel(), uid)
         this.publish(uid, {
           audio: true,
           video: false,
@@ -81,18 +91,34 @@ class Metting extends Component<any> {
     }
   }
 
-  handleStart = () => {
-    // TODO 提交会议主题
-
-  }
-
   handleSubtitle = () => {
     const { isShowSubtitle } = this.state
     this.setState({ isShowSubtitle: !isShowSubtitle })
   }
 
   handleHangUp = () => {
+    this.setState({ maskVisible: true })
+  }
 
+  handleCancel = () => {
+    this.setState({ maskVisible: false })
+  }
+
+  handleLeave = (e: any) => {
+    e.stopPropagation();
+    const { localStream } = this.state;
+    if (localStream) {
+      localStream.stop();
+      localStream.close();
+    }
+    const { userStore } = this.props
+    userStore.userList.forEach((user: any) => {
+      if (user.stream) {
+        user.stream.stop()
+      }
+    })
+    userStore.clear()
+    this.props.history.replace('/')
   }
 
   initPromise() {
@@ -123,6 +149,7 @@ class Metting extends Component<any> {
       client.publish(localStream, (err: any) => {
         console.log(err)
       })
+      this.setState({ localStream });
     } catch (error) {
       console.log('publish error...', error)
     }
@@ -153,7 +180,7 @@ class Metting extends Component<any> {
       const id = remoteStream.getId()
 
       if (id !== uid) {
-        client.subscribe(remoteStream, undefined, (err: any) => {
+        client.subscribe(remoteStream, (err: any) => {
           console.log(err)
         })
       }
@@ -164,14 +191,16 @@ class Metting extends Component<any> {
     client.on("stream-subscribed", (evt: any) => {
       const remoteStream = evt.stream
       const id = remoteStream.getId()
-      const { userStore: { userList } } = this.props
-      userList.push({
-        name: 'f43f3',
+      const { userStore } = this.props
+      const name = id + ''
+      userStore.addUser({
+        name,
         uid: id,
-        avatar: '',
+        avatar: genAvatarByName([90, 90], name),
         stream: remoteStream,
+        type: 1,
       });
-      remoteStream.play("remote_video_" + id)
+      remoteStream.play("remote_video_" + id);
       console.log('stream-subscribed remote-uid: ', id)
     })
 
@@ -181,21 +210,29 @@ class Metting extends Component<any> {
       var id = remoteStream.getId()
       // Stop playing the remote stream.
       remoteStream.stop("remote_video_" + id)
-      // Remove the view of the remote stream.
-      // removeView(id) 
+      const { userStore } = this.props
+      userStore.delUser(id)
       console.log('stream-removed remote-uid: ', id)
+    })
+  }
+
+  handleVoice = () => {
+    const { userStore: { userList } } = this.props
+    userList.forEach((user: any) => {
+      if (user && user.stream) {
+        user.stream.stop();
+      }
     })
   }
 
   render() {
     const { userStore: { userList } } = this.props
-    const { recordingStatus, isShowSubtitle } = this.state
+    const { recordingStatus, isShowSubtitle, maskVisible } = this.state
 
     return (
       <div className='metting'>
         <div className='user-container'>
           <div className='user-inner'>
-
             {
               // 用户头像
               userList.length > 0 &&
@@ -203,36 +240,20 @@ class Metting extends Component<any> {
                 <div key={item.name} className='user'>
                   <div className='avatar'><img alt='avatar' className='img' src={item.avatar} /></div>
                   <div className='name'>{item.name}</div>
+                  {
+                    item.type === 0 ?
+                      <div id='local_stream'></div> :
+                      <div id={`remote_video_${item.uid}`}></div>
+                  }
                 </div>
               )
             }
-
             <div className='user'>
               <div className='avatar'><div className='invivate'></div></div>
               <div className='name'><div className='title'>邀请</div></div>
             </div>
           </div>
         </div>
-
-        {/* {
-          // 拉流或推流组件
-          media.length > 0 &&
-          media.map(item =>
-            item.type === 0 ? // 推流
-              <LivePusher
-                mode='RTC'
-                key={item.url}
-                url={item.url}
-                enable-camere={false}
-              // bindstatechange={this.handleRecorderStateChange}
-              /> :
-              item.type === 1 ? // 拉流
-                <LivePlayer
-                  key={item.url}
-                  url={item.url}
-                /> : null
-          )
-        } */}
 
         <div className='footer'>
           <div className='operator-container'>
@@ -250,12 +271,25 @@ class Metting extends Component<any> {
             </div>
           </div>
 
-          {/* <div className='bottom-container'>
-            <div className='microphone'></div>
+          <div className='bottom-container'>
+            <div className='microphone' onClick={this.handleVoice}></div>
             <div className='camera'></div>
             <div onClick={this.handleHangUp} className='hangup'></div>
-          </div> */}
-          <div id='local_stream'></div>
+          </div>
+        </div>
+
+        <div onClick={this.handleCancel} className={`${maskVisible ? 'mask visible' : 'mask'}`}>
+          <div className='container'>
+            <div className='text-container'>
+              <div>若自己离开，系统会自动指派一名主持人</div>
+            </div>
+            <div className='leave-container' onClick={this.handleLeave}>
+              <div>离开会议</div>
+            </div>
+            <div className='cancel-container' onClick={this.handleCancel}>
+              <div>取消</div>
+            </div>
+          </div>
         </div>
       </div>
     )

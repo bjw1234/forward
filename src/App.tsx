@@ -6,8 +6,8 @@ import {
   // Link,
 } from 'react-router-dom';
 import Home from './pages/Home';
-import Video from './pages/Video';
 import Join from './pages/Join';
+import Login from './pages/Login';
 import Metting from './pages/Metting';
 
 function App() {
@@ -21,9 +21,9 @@ function App() {
 
       <Switch>
         <Route exact path="/" component={Home} />
+        <Route path="/login" component={Login} />
         <Route exact path="/join" component={Join} />
         <Route path="/metting" component={Metting} />
-        <Route path="/video" component={Video} />
       </Switch>
 
       {/* <div styleName="footer">

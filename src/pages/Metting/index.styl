@@ -128,42 +128,94 @@
   }
 
   .bottom-container {
-    width: 543px;
-    height: 108px;
-    transform: scale(0.5) translateX(50%);
+    width: 272px;
+    height: 54px;
     display: flex;
     justify-content: center;
     align-items: center;
     background: #484c56;
-    box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.06);
-    border-radius: 54px;
-    margin: 59px 0 0 5px;
-    position: relative;
-    left: -50%;
+    box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, 0.06);
+    border-radius: 27px;
+    margin: 30px auto;
 
     .microphone {
-      width: 72px;
-      height: 124px;
+      width: 36px;
+      height: 62px;
       background-image: url('../../assets/img/microphone.png');
-      background-size: 72px 124px;
+      background-size: 36px 62px;
       transform: scale(0.5);
     }
 
     .camera {
-      width: 110px;
-      height: 74px;
+      width: 55px;
+      height: 37px;
       background-image: url('../../assets/img/camera.png');
-      background-size: 110px 74px;
-      transform: scale(0.6);
+      background-size: 55px 37px;
+      transform: scale(0.5);
       margin: 0 30px;
     }
 
     .hangup {
-      width: 138px;
-      height: 40px;
+      width: 70px;
+      height: 24px;
       background-image: url('../../assets/img/hangup.png');
-      background-size: 138px 48px;
-      transform: scale(0.6);
+      background-size: 70px 24px;
+      transform: scale(0.5);
+
+      &::after {
+        position: absolute;
+        content: '';
+        padding: 30px 40px;
+        margin-top: -15px;
+      }
+    }
+  }
+
+  .mask {
+    position: fixed;
+    top: 0;
+    bottom: 220px;
+    width: 100%;
+    z-index: 10;
+    background: #000000b5;
+    opacity: 0;
+    transition: 0.3s all linear;
+    z-index: -1;
+
+    &.visible {
+      opacity: 1;
+      z-index: 10;
+
+      .container {
+        height: 220px;
+      }
+    }
+
+    .container {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 0;
+      background: #2B2F38;
+      color: #7F838C;
+      transition: 0.3s all linear;
+
+      .text-container {
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      .leave-container {
+        text-align: center;
+        color: #DA676A;
+        padding: 30px 0;
+      }
+
+      .cancel-container {
+        text-align: center;
+        border-top: 1px solid #6E727B;
+        padding-top: 30px;
+      }
     }
   }
 }

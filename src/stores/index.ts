@@ -1,9 +1,9 @@
-import CountStore from './CountStore';
+import CommonStore from './CommonStore';
 import UserStore from './UserStore';
 
 const stores = {
-  countStore: new CountStore(),
+  commonStore: new CommonStore(),
   userStore: new UserStore(),
 }
 
-export default stores;
+export default stores

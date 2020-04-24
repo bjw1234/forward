@@ -1,0 +1,19 @@
+.toast-container {
+  position: fixed;
+  z-index: 1000;
+  bottom: 50px;
+  background: #656868;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  padding: 10px 30px;
+  border-radius: 10px;
+  color: #fff;
+  opacity: 1;
+  transition: 0.2s all linear;
+
+  &.hidden {
+    opacity: 0;
+    bottom: 0;
+  }
+}

@@ -1,15 +1,7 @@
 import React, { Component } from "react";
-import { observer, inject } from "mobx-react";
-// import { ICountStore } from "../../stores/CountStore";
 import footer from "../../assets/img/home@2x.png";
 import "./index.styl";
 
-// interface IChild {
-//   countStore: ICountStore
-// }
-
-@inject("countStore")
-@observer
 class Home extends Component<any> {
 
   handleLaunch = () => {

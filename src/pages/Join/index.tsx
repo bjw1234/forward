@@ -1,25 +1,40 @@
 import React, { Component } from "react";
 import { inject } from 'mobx-react'
-import "./index.styl";
+import { genAvatarByName } from '../../utils'
+import "./index.styl"
+import { getToken } from '../../services'
+import Toast from '../../components/Toast'
 
 @inject("userStore")
+@inject("commonStore")
 class Join extends Component<any> {
 
-  handleStart = () => {
-    // 存储当前用户
-    // TODO 请求网络获得用户信息
-    // TODO 获取token，channel
-    const uid = Math.floor(Math.random() * 10000)
-    const { userStore } = this.props;
-    userStore.addUser({
-      uid: uid,
-      name: uid + '',
-      avatar: '',
-      stream: null,
-      type: 0,
-    });
-    // TODO 提交会议主题
-    this.props.history.replace('/metting');
+  handleStart = async () => {
+    try {
+      // 存储当前用户
+      // TODO 请求网络获得用户信息
+      // TODO 获取token，channel
+      const uid = Math.floor(Math.random() * 10000)
+      const { userStore, commonStore } = this.props;
+      const name = uid + '';
+      userStore.addUser({
+        uid: uid,
+        name,
+        avatar: genAvatarByName([90, 90], name),
+        stream: null,
+        type: 0,
+      })
+      const tokenRet: any = await getToken(uid)
+      if (tokenRet && tokenRet.data) {
+        const { data: { Channel, Token } } = tokenRet
+        commonStore.setToken(Token)
+        commonStore.setChannel(Channel)
+        // TODO 提交会议主题
+        this.props.history.replace('/metting')
+      }
+    } catch (e) {
+      Toast.info("请求服务器出错", 1500)
+    }
   }
 
   handleClose = () => {
